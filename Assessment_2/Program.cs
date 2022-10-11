@@ -167,7 +167,6 @@ namespace Assessment_2
                                 break;
                             case "2":
                                 login();
-                                
                                 state = 2;
                                 input = null;
                                 break;

@@ -90,6 +90,9 @@ namespace Assessment_2
                 {
                     break;
                 }
+            }
+            while (true)
+            {
                 Console.WriteLine("\nInitial Price");
                 Prod_Init_Price = Console.ReadLine();
                 if (Regex.IsMatch(Prod_Init_Price, "[0-9]+"))
