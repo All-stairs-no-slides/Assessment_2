@@ -95,9 +95,18 @@ namespace Assessment_2
             {
                 Console.WriteLine("\nInitial Price");
                 Prod_Init_Price = Console.ReadLine();
-                if (Regex.IsMatch(Prod_Init_Price, "[0-9]+[0-9][0-9]"))
+                if (Regex.IsMatch(Prod_Init_Price, "[0-9]+.[0-9][0-9]")) // fix this later so that it actually checks only for a period
                 {
-                    Item_For_Sale new_Item = new Item_For_Sale();
+                    break;
+                }
+            }
+            while (true)
+            {
+                Console.WriteLine("\nProduct Description");
+                Prod_Description = Console.ReadLine();
+                if (Regex.IsMatch(Prod_Description, "[\x21-\x7E]"))
+                {
+                    Item_For_Sale new_Item = new Item_For_Sale(prod_name, Prod_Description, Prod_Init_Price);
                     break;
                 }
             }
