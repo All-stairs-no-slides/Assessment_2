@@ -10,6 +10,7 @@ namespace Assessment_2
 {
     internal class Client
     {
+        public string client_num;
         public string name;
         public string password;
         public string email;
@@ -106,7 +107,8 @@ namespace Assessment_2
                 Prod_Description = Console.ReadLine();
                 if (Regex.IsMatch(Prod_Description, "[\x21-\x7E]"))
                 {
-                    Item_For_Sale new_Item = new Item_For_Sale(prod_name, Prod_Description, Prod_Init_Price);
+                    Item_For_Sale new_Item = new Item_For_Sale(prod_name, Prod_Description, Prod_Init_Price, client_num);
+                    new_Item.save_Item();
                     break;
                 }
             }

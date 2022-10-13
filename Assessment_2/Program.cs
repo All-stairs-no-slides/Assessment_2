@@ -7,17 +7,21 @@ namespace Assessment_2
     {
         static Client logged_in_Client = new Client();
         public static void Save_Details(string saved_names, string saved_passwords, string saved_emails)
-        {
+        {  
             if (File.Exists("saved_Clients.txt"))
             {
+                string details = File.ReadAllText("saved_Clients.txt");
+                MatchCollection prev_num = Regex.Matches(details, "[0-9]+.\\r?\\nname: ");//(?!.*[0-9]+.\nname: )
+                string this_num = (prev_num.Count + 1).ToString();
+
                 using (StreamWriter sw = File.AppendText("saved_Clients.txt"))
                 {
-                    sw.WriteLine("name: " + saved_names + "\nemail: " + saved_emails + "\npassword: " + saved_passwords);
+                    sw.WriteLine(this_num + "." + "\nname: " + saved_names + "\nemail: " + saved_emails + "\npassword: " + saved_passwords + "\n");
                 }
             }
             else
             {
-                File.WriteAllText("saved_Clients.txt", "name: " + saved_names + "\nemail: " + saved_emails + "\npassword: " + saved_passwords + "\n");
+                File.WriteAllText("saved_Clients.txt","1.\nname: " + saved_names + "\nemail: " + saved_emails + "\npassword: " + saved_passwords + "\n");
             }
         }
         private static void login()
@@ -45,18 +49,19 @@ namespace Assessment_2
             {
                 Console.WriteLine("\nPlease Enter Your Password");
                 password = Console.ReadLine();
-                string password_regex = identifier + "\npassword: " + password + "\n";
+                string password_regex = identifier + "\npassword: " + password;
                 Match found_password = System.Text.RegularExpressions.Regex.Match(details, password_regex);
                 if (found_password.Success)
                 {
                     break;
                 }
-                Console.WriteLine("\nThere was no " + password_regex);
+                Console.WriteLine("\nThere was no password " + password);
             }
             logged_in_Client.password = password;
 
-            Match Clientnum = System.Text.RegularExpressions.Regex.Match(details, "[0-9]+.+\n.+\nemail: " + identifier);
+            Match Clientnum = System.Text.RegularExpressions.Regex.Match(details, "[0-9]+.\n.+\nemail: " + identifier);
             Clientnum = Regex.Match(Clientnum.Value, "[0-9]+");
+            logged_in_Client.client_num = Clientnum.Value;
 
             // do the address input loop here
             Match does_address_exist = System.Text.RegularExpressions.Regex.Match(details, Clientnum.Value + " has registered address: ");
