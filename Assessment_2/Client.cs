@@ -94,12 +94,13 @@ namespace Assessment_2
             }
             while (true)
             {
-                Console.WriteLine("\nInitial Price");
+                Console.WriteLine("\nInitial Price ($d.cc)");
                 Prod_Init_Price = Console.ReadLine();
-                if (Regex.IsMatch(Prod_Init_Price, "[0-9]+.[0-9][0-9]")) // fix this later so that it actually checks only for a period
+                if (Regex.IsMatch(Prod_Init_Price, "\\$[0-9]+\\.[0-9][0-9]")) // fix this later so that it actually checks only for a period
                 {
                     break;
                 }
+                Console.WriteLine("a Currency is required e.g. '$12.00' or '$19.00'");
             }
             while (true)
             {
@@ -110,6 +111,28 @@ namespace Assessment_2
                     Item_For_Sale new_Item = new Item_For_Sale(prod_name, Prod_Description, Prod_Init_Price, client_num);
                     new_Item.save_Item();
                     break;
+                }
+            }
+        }
+
+        public void View_products()
+        {
+            Console.WriteLine("\nItem #    Product Name    Description    Listed price    Bidder name    Bidder email    Bid amt");
+            string details = File.ReadAllText("Saved_Products.txt");
+            MatchCollection items = Regex.Matches(details, "user ID: " + this.client_num + "\r?\nproduct name: .+\r?\nproduct price: .+\r?\nproduct description: .+\r?\n");
+            if(items.Count > 0)
+            {
+                int item_num = 0;
+                foreach(Match item in items)
+                {
+                    item_num++;
+                    Match prod_name = Regex.Match(item.Value, "(\\r?\\nproduct name: )(.+)\\r?\\n");
+                    string final_prod_name = prod_name.Groups[2].Value.Replace("\r", "");
+                    Match prod_desc = Regex.Match(item.Value, "(\\r?\\nproduct description: )(.+)");
+                    string final_prod_desc = prod_desc.Groups[2].Value.Replace("\r", "");
+                    Match prod_price = Regex.Match(item.Value, "(\\r?\\nproduct price: )(.+)\\r?\\n");
+                    string final_prod_price = prod_price.Groups[2].Value.Replace("\r", "");
+                    Console.WriteLine(item_num.ToString() + "    " + final_prod_name + "    " + final_prod_desc + "    " + final_prod_price);
                 }
             }
         }

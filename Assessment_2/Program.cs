@@ -184,7 +184,7 @@ namespace Assessment_2
                         }
                         break;
                     case 2: // Client Menu page
-                        Console.WriteLine("\nClient Menu------\n(1) Advertise Product\n(2) View My Poroduct list\n(3) Search For Advertised Products\n(4) View Bids On My Products\n(5) View My Purchased Itedms\n(6) Log off\n\nPlease select an option between 1 and 6");
+                        Console.WriteLine("\nClient Menu\n------\n(1) Advertise Product\n(2) View My Poroduct list\n(3) Search For Advertised Products\n(4) View Bids On My Products\n(5) View My Purchased Itedms\n(6) Log off\n\nPlease select an option between 1 and 6");
                         input = Console.ReadLine();
                         switch (input)
                         {
@@ -194,6 +194,7 @@ namespace Assessment_2
                                 break;
                             case "2":
                                 input = null;
+                                logged_in_Client.View_products();
                                 break;
                             case "3":
                                 input = null;
