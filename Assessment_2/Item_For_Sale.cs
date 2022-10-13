@@ -33,7 +33,7 @@ namespace Assessment_2
             }
             else
             {
-                File.WriteAllText("Saved_Products.txt", "\nuser ID: " + client_ID + "product name: " + name + "\nproduct price: " + price + "\nproduct description: " + description);
+                File.WriteAllText("Saved_Products.txt", "\nuser ID: " + client_ID + "\nproduct name: " + name + "\nproduct price: " + price + "\nproduct description: " + description);
             }
         }
     }

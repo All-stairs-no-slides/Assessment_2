@@ -11,7 +11,7 @@ namespace Assessment_2
             if (File.Exists("saved_Clients.txt"))
             {
                 string details = File.ReadAllText("saved_Clients.txt");
-                MatchCollection prev_num = Regex.Matches(details, "[0-9]+.\\r?\\nname: ");//(?!.*[0-9]+.\nname: )
+                MatchCollection prev_num = Regex.Matches(details, "[0-9]+.\\r?\\nname: ");
                 string this_num = (prev_num.Count + 1).ToString();
 
                 using (StreamWriter sw = File.AppendText("saved_Clients.txt"))
@@ -35,7 +35,7 @@ namespace Assessment_2
             {
                 Console.WriteLine("Please Enter Your Email Address");
                 email = Console.ReadLine();
-                string email_regex = "email: " + email + "\n";
+                string email_regex = "email: " + Regex.Escape(email) + "\r?\n";
                 Match found_email = System.Text.RegularExpressions.Regex.Match(details, email_regex);
                 if (found_email.Success)
                 {
@@ -49,7 +49,7 @@ namespace Assessment_2
             {
                 Console.WriteLine("\nPlease Enter Your Password");
                 password = Console.ReadLine();
-                string password_regex = identifier + "\npassword: " + password;
+                string password_regex = Regex.Escape(identifier) + "\r?\npassword: " + Regex.Escape(password);
                 Match found_password = System.Text.RegularExpressions.Regex.Match(details, password_regex);
                 if (found_password.Success)
                 {
@@ -61,7 +61,7 @@ namespace Assessment_2
 
             Match Clientnum = System.Text.RegularExpressions.Regex.Match(details, "[0-9]+.\n.+\nemail: " + identifier);
             Clientnum = Regex.Match(Clientnum.Value, "[0-9]+");
-            logged_in_Client.client_num = Clientnum.Value;
+            logged_in_Client.client_num = Clientnum.Value; // this esures that the logged in client's ID is accessible
 
             // do the address input loop here
             Match does_address_exist = System.Text.RegularExpressions.Regex.Match(details, Clientnum.Value + " has registered address: ");
@@ -184,7 +184,7 @@ namespace Assessment_2
                         }
                         break;
                     case 2: // Client Menu page
-                        Console.WriteLine("\nClient Menu------\n(1) Advertise Product\n(2) View My Poroduct list\n (3) Search For Advertised Products\n(4) View Bids On My Products\n(5) View My Purchased Itedms\n(6) Log off\n\nPlease select an option between 1 and 6");
+                        Console.WriteLine("\nClient Menu------\n(1) Advertise Product\n(2) View My Poroduct list\n(3) Search For Advertised Products\n(4) View Bids On My Products\n(5) View My Purchased Itedms\n(6) Log off\n\nPlease select an option between 1 and 6");
                         input = Console.ReadLine();
                         switch (input)
                         {
