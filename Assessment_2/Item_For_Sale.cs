@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Assessment_2
 {
@@ -26,14 +27,17 @@ namespace Assessment_2
         {
             if (File.Exists("Saved_Products.txt"))
             {
+                string details = File.ReadAllText("saved_Products.txt");
+                MatchCollection prev_num = Regex.Matches(details, "[0-9]+.\\r?\\nuser ID: ");
+                string this_num = (prev_num.Count + 1).ToString();
                 using (StreamWriter sw = File.AppendText("Saved_Products.txt"))
                 {
-                    sw.WriteLine("\nuser ID: " + client_ID +  "\nproduct name: " + name + "\nproduct price: " + price + "\nproduct description: " + description);
+                    sw.WriteLine("\n" + this_num + "." + "\nuser ID: " + client_ID +  "\nproduct name: " + name + "\nproduct price: " + price + "\nproduct description: " + description);
                 }
             }
             else
             {
-                File.WriteAllText("Saved_Products.txt", "\nuser ID: " + client_ID + "\nproduct name: " + name + "\nproduct price: " + price + "\nproduct description: " + description);
+                File.WriteAllText("Saved_Products.txt", "1.\nuser ID: " + client_ID + "\nproduct name: " + name + "\nproduct price: " + price + "\nproduct description: " + description);
             }
         }
     }

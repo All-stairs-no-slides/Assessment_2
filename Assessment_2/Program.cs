@@ -6,6 +6,78 @@ namespace Assessment_2
     internal class Program
     {
         static Client logged_in_Client = new Client();
+
+        private static void search_for_products()
+        {
+            Console.WriteLine("Please supply a search phrase (ALL to see all products)");
+            string search_prompt = Console.ReadLine();
+            string collation_of_products = "";
+            int item_num = 0;
+            string details = File.ReadAllText("Saved_Products.txt");
+            MatchCollection items = Regex.Matches(details, "[0-9]+.\\r?\\nuser ID: [0-9]\r?\nproduct name: .+\r?\nproduct price: .+\r?\nproduct description: .+\r?\n");
+            Console.WriteLine("\nItem #    Product Name    Description    Listed price    Bidder name    Bidder email    Bid amt");
+            if (search_prompt == "ALL")
+            {
+                foreach (Match match in items)
+                {
+                    Match ID = Regex.Match(match.Value, "(user ID: )([0-9]+)\\r?\\n");
+                    string final_ID = ID.Groups[2].Value.Replace("\r", "");
+                    if (final_ID == logged_in_Client.client_num)
+                    {
+                        continue;
+                    }
+                    collation_of_products += match.Value;
+                    item_num++;
+                    Match prod_name = Regex.Match(match.Value, "(\\r?\\nproduct name: )(.+)\\r?\\n");
+                    string final_prod_name = prod_name.Groups[2].Value.Replace("\r", "");
+                    Match prod_desc = Regex.Match(match.Value, "(\\r?\\nproduct description: )(.+)");
+                    string final_prod_desc = prod_desc.Groups[2].Value.Replace("\r", "");
+                    Match prod_price = Regex.Match(match.Value, "(\\r?\\nproduct price: )(.+)\\r?\\n");
+                    string final_prod_price = prod_price.Groups[2].Value.Replace("\r", "");
+                    Console.WriteLine(item_num.ToString() + "    " + final_prod_name + "    " + final_prod_desc + "    " + final_prod_price);
+                }
+            }
+            else
+            {
+                foreach (Match match in items)
+                {
+                    Match ID = Regex.Match(match.Value, "(user ID: )([0-9]+)\\r?\\n");
+                    string final_ID = ID.Groups[2].Value.Replace("\r", "");
+                    if (final_ID == logged_in_Client.client_num)
+                    {
+                        continue;
+                    }
+                    collation_of_products += match.Value;
+                    Match prod_name = Regex.Match(match.Value, "(\\r?\\nproduct name: )(.+)\\r?\\n");
+                    string final_prod_name = prod_name.Groups[2].Value.Replace("\r", "");
+                    Match prod_desc = Regex.Match(match.Value, "(\\r?\\nproduct description: )(.+)");
+                    string final_prod_desc = prod_desc.Groups[2].Value.Replace("\r", "");
+                    Match prod_price = Regex.Match(match.Value, "(\\r?\\nproduct price: )(.+)\\r?\\n");
+                    string final_prod_price = prod_price.Groups[2].Value.Replace("\r", "");
+                    if (final_prod_name.Contains(search_prompt) || final_prod_desc.Contains(search_prompt) || final_prod_price.Contains(search_prompt))
+                    {
+                        item_num++;
+                        Console.WriteLine(item_num.ToString() + "    " + final_prod_name + "    " + final_prod_desc + "    " + final_prod_price);
+                    }
+                }
+
+            }
+            while (true)
+            {
+                Console.WriteLine("Would you like to bid on an item ('yes' or 'no')");
+                string bidding_time = Console.ReadLine();
+                if (bidding_time != "yes" && bidding_time != "no" || items.Count == 0)
+                {
+                    continue;
+                }
+                if (bidding_time == "yes")
+                {
+                    logged_in_Client.place_bid(collation_of_products, item_num);
+                }
+                break;
+            }
+        }
+
         public static void Save_Details(string saved_names, string saved_passwords, string saved_emails)
         {  
             if (File.Exists("saved_Clients.txt"))
@@ -184,7 +256,7 @@ namespace Assessment_2
                         }
                         break;
                     case 2: // Client Menu page
-                        Console.WriteLine("\nClient Menu\n------\n(1) Advertise Product\n(2) View My Poroduct list\n(3) Search For Advertised Products\n(4) View Bids On My Products\n(5) View My Purchased Itedms\n(6) Log off\n\nPlease select an option between 1 and 6");
+                        Console.WriteLine("\nClient Menu\n------\n(1) Advertise Product\n(2) View My Poroduct list\n(3) Search For Advertised Products\n(4) View Bids On My Products\n(5) View My Purchased Items\n(6) Log off\n\nPlease select an option between 1 and 6");
                         input = Console.ReadLine();
                         switch (input)
                         {
@@ -198,8 +270,10 @@ namespace Assessment_2
                                 break;
                             case "3":
                                 input = null;
+                                search_for_products();
                                 break;
                             case "4":
+                                logged_in_Client.view_bid_on_items();
                                 input = null;
                                 break;
                             case "5":

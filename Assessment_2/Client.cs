@@ -119,7 +119,9 @@ namespace Assessment_2
         {
             Console.WriteLine("\nItem #    Product Name    Description    Listed price    Bidder name    Bidder email    Bid amt");
             string details = File.ReadAllText("Saved_Products.txt");
-            MatchCollection items = Regex.Matches(details, "user ID: " + this.client_num + "\r?\nproduct name: .+\r?\nproduct price: .+\r?\nproduct description: .+\r?\n");
+            string bid_doc = File.ReadAllText("saved_bids.txt");
+            string clients = File.ReadAllText("saved_Clients.txt");
+            MatchCollection items = Regex.Matches(details, "[0-9]+\\.\r?\nuser ID: " + client_num + "\r?\nproduct name: .+\r?\nproduct price: .+\r?\nproduct description: .+\r?\n");
             if(items.Count > 0)
             {
                 int item_num = 0;
@@ -132,9 +134,102 @@ namespace Assessment_2
                     string final_prod_desc = prod_desc.Groups[2].Value.Replace("\r", "");
                     Match prod_price = Regex.Match(item.Value, "(\\r?\\nproduct price: )(.+)\\r?\\n");
                     string final_prod_price = prod_price.Groups[2].Value.Replace("\r", "");
-                    Console.WriteLine(item_num.ToString() + "    " + final_prod_name + "    " + final_prod_desc + "    " + final_prod_price);
+                    Match prod_num = Regex.Match(item.Value, "([0-9]+)\\.\\r?\\nuser ID: ");
+                    MatchCollection bids = Regex.Matches(bid_doc, "product ID: " + prod_num.Groups[1].Value + "\r?\nuser ID: ([0-9]+)\r?\nbid price: \\$([0-9]+\\.[0-9][0-9])");
+                    double highest_bid = 0.00;
+                    Match client = Regex.Match("", "");
+                    foreach(Match bid in bids)
+                    {
+                        double int_ver_bid = Double.Parse(bid.Groups[2].Value);
+                        if (highest_bid < int_ver_bid)
+                        {
+                            highest_bid = int_ver_bid;
+                            client = Regex.Match(clients, bid.Groups[1].Value + "\\.\r?\nname: (.+)\r?\nemail: (.+)\r?\n");
+                        }
+                    }
+                    Console.WriteLine(item_num.ToString() + "    " + final_prod_name + "    " + final_prod_desc + "    " + final_prod_price + "    " + client.Groups[1].Value + "    " + client.Groups[2].Value + "    " +  highest_bid.ToString());
                 }
             }
+        }
+
+        public void place_bid(string the_items, int num_of_items)
+        {
+            Console.WriteLine("\nPlease enter a non-negative integer between 1 and " + num_of_items.ToString());
+            string bid_on_item = Console.ReadLine();
+            int bid_on_num = Int32.Parse(bid_on_item);
+            MatchCollection new_matches = Regex.Matches(the_items, "([0-9]).\\r?\\nuser ID: ([0-9]+)\\r?\\nproduct name: (.+)\\r?\\nproduct price: (\\$[0-9]+\\.[0-9][0-9])");
+            double highest_bid = 0.00;
+            if (File.Exists("saved_bids.txt"))
+            {
+                string bids = File.ReadAllText("saved_bids.txt");
+                MatchCollection relevant_bid = Regex.Matches(bids, (new_matches[bid_on_num - 1].Groups[1].Value) + "\r?\nuser ID: ([0-9]+)\r?\nbid price: \\$([0-9]+\\.[0-9][0-9])");
+                foreach(Match match in relevant_bid)
+                {
+                    double int_ver_bid = Double.Parse(match.Groups[2].Value);
+                    if (highest_bid < int_ver_bid)
+                    {
+                        highest_bid = int_ver_bid;
+                    }
+                }
+            }
+            Console.WriteLine("Bidding for " + new_matches[bid_on_num - 1].Groups[3].Value + " (regular price " + new_matches[bid_on_num - 1].Groups[4].Value + "), current highest bid $" + highest_bid.ToString() + "\n\nHow much do you bid?");
+            string new_bid = Console.ReadLine();
+            string method;
+            while (true)
+            {
+                Console.WriteLine("\nDelivery Instructions\n----------------\n(1) Click and Collect\n(2) Home Delivery");
+                method = Console.ReadLine();
+                if (method == "1" || method == "2")
+                {
+                    break;
+                }
+            }
+            DateTime start_window;
+            DateTime end_window;
+            while (true)
+            {
+                Console.WriteLine("Delivery Window Start (DD/MM/YYYY HH:MM)");
+                string window_start = Console.ReadLine();
+                try
+                {
+                    start_window = DateTime.Parse(window_start);
+                } catch {
+                    Console.WriteLine("Please enter a valid date time");
+                    continue;
+                }
+                if (DateTime.Now.AddHours(1) < start_window)
+                {
+                    break;
+                }
+                Console.WriteLine("Delivery Window must start at least one hour in the future");
+            }
+            while (true)
+            {
+                Console.WriteLine("Delivery Window End (DD/MM/YYYY HH:MM)");
+                string window_end = Console.ReadLine();
+                try
+                {
+                    end_window = DateTime.Parse(window_end);
+                }
+                catch
+                {
+                    Console.WriteLine("Please enter a valid date time");
+                    continue;
+                }
+                if (start_window.AddHours(1) < end_window)
+                {
+                    break;
+                }
+                Console.WriteLine("Delivery end Window must start at least one hour in the future of the delivery start window");
+            }
+            string delivery = method + " " + start_window.ToString() + " " + end_window.ToString();
+            bidder new_bidder = new bidder(client_num, new_matches[bid_on_num - 1].Groups[1].Value, new_bid, delivery);
+            new_bidder.save_details();
+        }
+
+        public void view_bid_on_items()
+        {
+            MatchCollection bids = Regex.Matches("saved_bids.txt", "");
         }
     }
 }
