@@ -83,8 +83,8 @@ namespace Assessment_2
             if (File.Exists("saved_Clients.txt"))
             {
                 string details = File.ReadAllText("saved_Clients.txt");
-                MatchCollection prev_num = Regex.Matches(details, "[0-9]+.\\r?\\nname: ");
-                string this_num = (prev_num.Count + 1).ToString();
+                MatchCollection prev_num = Regex.Matches(details, "([0-9]+).\\r?\\nname: ");
+                string this_num = (Int32.Parse(prev_num[prev_num.Count + 1].Groups[1].Value)+ 1).ToString();
 
                 using (StreamWriter sw = File.AppendText("saved_Clients.txt"))
                 {
@@ -280,12 +280,7 @@ namespace Assessment_2
                                 input = null;
                                 break;
                             case "6":
-                                input = null;
-                                break;
-                            case "7":
-                                input = null;
-                                break;
-                            case "8":
+                                state = 1;
                                 input = null;
                                 break;
                         }
