@@ -225,7 +225,7 @@ namespace Assessment_2
                     }
                     Console.WriteLine("Delivery end Window must start at least one hour in the future of the delivery start window");
                 }
-                delivery = method + " " + start_window.ToString() + " " + end_window.ToString();
+                delivery = "Click_and_collect " + start_window.ToString() + " " + end_window.ToString();
             }
             
             bidder new_bidder = new bidder(client_num, new_matches[bid_on_num - 1].Groups[1].Value, new_bid, delivery);
@@ -319,12 +319,12 @@ namespace Assessment_2
                 string this_num = (Int32.Parse(prev_num[prev_num.Count - 1].Groups[1].Value) + 1).ToString();
                 using (StreamWriter sw = File.AppendText("saved_purchases.txt"))
                 {
-                    sw.WriteLine(this_num + ".\nselling user: " + product.Groups[1].Value + "\nbuying user: " + this_bid.Groups[2].Value + "\nproduct name: " + product.Groups[2].Value + "\nproduct price: " + product.Groups[3].Value + "bidding ID: " + bid_ID);
+                    sw.WriteLine(this_num + ".\nselling user: " + product.Groups[1].Value + "\nbuying user: " + this_bid.Groups[2].Value + "\nproduct name: " + product.Groups[2].Value + "\nproduct price: " + product.Groups[3].Value + "\nbidding ID: " + bid_ID + "\nproduct description: " + product.Groups[4].Value + "\namt paid: " + this_bid.Groups[3].Value);
                 }
             }
             else
             {
-                File.WriteAllText("saved_purchases.txt", "1.\nselling user: " + client_num + "\nbuying user: " + this_bid.Groups[2].Value + "\nproduct name: " + product.Groups[2].Value + "\nproduct price: " + product.Groups[3].Value + "\nbidding ID: " + bid_ID + "\nproduct description: ");
+                File.WriteAllText("saved_purchases.txt", "1.\nselling user: " + client_num + "\nbuying user: " + this_bid.Groups[2].Value + "\nproduct name: " + product.Groups[2].Value + "\nproduct price: " + product.Groups[3].Value + "\nbidding ID: " + bid_ID + "\nproduct description: " + product.Groups[4].Value + "\namt paid: " + this_bid.Groups[3].Value);
             }
 
             if (Regex.Match(bids_doc, ".").Success)
@@ -342,6 +342,23 @@ namespace Assessment_2
             } else
             {
                 File.Delete("saved_products.txt");
+            }
+        }
+        public void view_purchase_items()
+        {
+            string all_purchased_products = File.ReadAllText("saved_purchases.txt");
+            string all_clients = File.ReadAllText("saved_Clients.txt");
+            string bids = File.ReadAllText("saved_bids.txt");
+            MatchCollection purchased_products = Regex.Matches(all_purchased_products, "([0-9])+\\.\\r?\\nselling user: ([0-9]+)\\r?\\nbuying user: " + client_num + "\\r?\\nproduct name: (.+)\\r?\\nproduct price: ([0-9]\\.[0-9][0-9])\\r?\\nbidding ID: ([0-9]+)\\r?\\nproduct description: (.+)\\r?\\namt paid: ([0-9]\\.[0-9][0-9])");
+            Console.WriteLine("Item#    Seller email    Product name    Description    Listed price    Amt paid    Delivery option");
+            int item_num = 0;
+            
+            foreach(Match match in purchased_products)
+            {
+                Match seller_email = Regex.Match(all_clients, match.Groups[1].Value + "\\.\\r?\\nname: (.+)\\r?\\nemail: (.+)\\r?\\n");
+                Match option = Regex.Match(bids, "delivery: " + match.Groups[5].Value + "(.+)");
+                item_num++;
+                Console.WriteLine(item_num.ToString() + "    " + seller_email.Groups[2].Value + "    " + match.Groups[3].Value + "    " + match.Groups[6].Value + "    $" + match.Groups[4].Value + "    $" + match.Groups[7].Value + "    " + option.Groups[1].Value);
             }
         }
     }

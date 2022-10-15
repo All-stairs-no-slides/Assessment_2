@@ -31,12 +31,12 @@ namespace Assessment_2
 
                 using (StreamWriter sw = File.AppendText("saved_bids.txt"))
                 {
-                    sw.WriteLine(this_num + "." + "\nproduct ID: " + product + "\nuser ID: " + user + "\nbid price: " + price + "\ndelivery: " + delivery);
+                    sw.WriteLine(this_num + "." + "\nproduct ID: " + product + "\nuser ID: " + user + "\nbid price: " + price + "\ndelivery: " + this_num + delivery);
                 }
             }
             else
             {
-                File.WriteAllText("saved_bids.txt", "1.\nproduct ID: " + product + "\nuser ID: " + user + "\nbid price: " + price + "\ndelivery: " + delivery);
+                File.WriteAllText("saved_bids.txt", "1.\nproduct ID: " + product + "\nuser ID: " + user + "\nbid price: " + price + "\ndelivery: 1" + delivery);
             }
         }
     }

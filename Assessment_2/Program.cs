@@ -62,20 +62,24 @@ namespace Assessment_2
                 }
 
             }
-            while (true)
+            if(items.Count > 0)
             {
-                Console.WriteLine("Would you like to bid on an item ('yes' or 'no')");
-                string bidding_time = Console.ReadLine();
-                if (bidding_time != "yes" && bidding_time != "no" || items.Count == 0)
+                while (true)
                 {
-                    continue;
+                    Console.WriteLine("Would you like to bid on an item ('yes' or 'no')");
+                    string bidding_time = Console.ReadLine();
+                    if (bidding_time != "yes" && bidding_time != "no" || items.Count == 0)
+                    {
+                        continue;
+                    }
+                    if (bidding_time == "yes")
+                    {
+                        logged_in_Client.place_bid(collation_of_products, item_num);
+                    }
+                    break;
                 }
-                if (bidding_time == "yes")
-                {
-                    logged_in_Client.place_bid(collation_of_products, item_num);
-                }
-                break;
             }
+            
         }
 
         public static void Save_Details(string saved_names, string saved_passwords, string saved_emails)
@@ -277,6 +281,7 @@ namespace Assessment_2
                                 input = null;
                                 break;
                             case "5":
+                                logged_in_Client.view_purchase_items();
                                 input = null;
                                 break;
                             case "6":
